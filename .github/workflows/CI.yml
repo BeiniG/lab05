@@ -4,11 +4,6 @@ jobs:
   build_and_test:
     runs-on: ubuntu-latest
     steps:
-      - name: Set GCC 11
-        uses: egor-tensin/setup-gcc@v1
-        with:
-          version: 11
-          platform: x64
       - name: Get repo files
         uses: actions/checkout@v6
         with:
