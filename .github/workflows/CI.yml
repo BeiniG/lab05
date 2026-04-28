@@ -1,0 +1,32 @@
+name: BankTest
+on: push
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set GCC 11
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: 11
+          platform: x64
+      - name: Get repo files
+        uses: actions/checkout@v6
+        with:
+          submodules: true
+      - name: Build configuration
+        run: cmake -H. -B build -D BUILD_TESTS=ON -D COLLECT_COVERAGE=ON
+      - name: Build project
+        run: cmake --build build
+      - name: Run tests
+        run: ./build/check
+      - name: Install lcov
+        run: sudo apt install lcov
+      - name: Create a conf file
+        run: lcov --capture --directory build/banking --gcov-tool /usr/bin/gcov-11 --output-file=cov.info
+      - name: Cover percent
+        run: lcov --list cov.info
+      - name: Coveralls Upload
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: cov.info
